@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/tooplate-style.css">
+
+    <title>抽签系统</title>
+      <script>
+          var list = [];
+          var remained_list = [];
+          var target = 3;
+          var num = 0;
+          var c = "";
+          var k = 0;
+          var drawed_list = [];
+          var t;
+          var tt;
+          
+          function obtainParameters(){
+              var list_info = document.getElementById('list_info').value;
+              target = document.getElementById('target_info').value;
+              
+              list = list_info.split(",");
+              document.getElementById('drawSummary').innerHTML = "从" + list.length + "个选项中抽取" + target + "个";
+              document.getElementById('drawSummary2').innerHTML = "从" + list.length + "个选项中抽取" + target + "个";
+              remained_list = list;
+              c = remained_list[0];
+              document.getElementById("count").innerHTML = "请点击开始抽取";
+              document.getElementById("setting").innerHTML = "";
+              document.getElementById("startBtn").removeAttribute("hidden");
+          }
+          
+          function timedCount()
+          {
+              document.getElementById('txt').innerHTML = c;
+              k = k+1;
+              k = k%(remained_list.length);
+              c = remained_list[k];
+              t = setTimeout("timedCount()",100)
+          }
+
+          function changeButton(status){
+              if(status==1) {
+                  document.getElementById("startBtn").hidden = "hide";
+                  document.getElementById("drawBtn").removeAttribute("hidden");
+              }
+              if (status==2) {
+                  document.getElementById("drawBtn").hidden = "hide";
+                  document.getElementById("startBtn").removeAttribute("hidden");
+              }
+          }
+          
+          function stopCount()
+          {
+              clearTimeout(t);
+              tt = document.getElementById('txt').innerHTML;
+              document.getElementById("startBtn").hidden = "hide";
+              document.getElementById("drawBtn").removeAttribute("hidden");
+          }
+          
+          function Random()
+          {
+              drawed_list.push(tt);
+              var drawed = document.getElementById("display");
+              num++;
+              drawed.innerHTML = drawed.innerHTML + "<span>第"+num+"组抽中："+tt+"</span><br>";
+              
+              var tmp = [];
+              tmp.length = 0;
+              for(var i = 0; i < remained_list.length; i++)
+              {
+                  if(remained_list[i]!==tt){
+                      tmp.push(remained_list[i]);
+                  }
+              }
+              remained_list = tmp;
+              document.getElementById("count").innerHTML = "目前已经抽出" + drawed_list.length + "个";
+              document.getElementById("setting").innerHTML = "";
+              document.getElementById("clearBtn").removeAttribute("hidden");
+          }
+          
+          function Check(){
+              if(drawed_list.length >= target){
+                  alert("已经抽完!即将重新抽取。");
+                  Clear();
+              }
+          }
+          
+          function Clear()
+          {
+              remained_list = list;
+              num = 0;
+              c = remained_list[0];
+              k = 0;
+              drawed_list = [];
+              
+              clearTimeout(t);
+              
+              document.getElementById('txt').innerHTML =  "等待抽取";
+              document.getElementById("count").innerHTML = "还未设置抽签内容，请先设置";
+              document.getElementById("setting").innerHTML = "<a class=\"section-btn\" href= \"#contact\" id=\"setting\">设置</a>";
+              document.getElementById("display").innerHTML = "";
+              document.getElementById("drawSummary").innerHTML = "";
+              document.getElementById("drawSummary2").innerHTML = "";
+              document.getElementById("clearBtn").hidden = "hide";
+              obtainParameters();
+          }
+          
+      </script>
+  </head>
+  <body>
+      <section class="navbar custom-navbar navbar-fixed-top" role="navigation">
+          <div class="container">
+              <div class="navbar-header">
+                  <button class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                      <span class="icon icon-bar"></span>
+                      <span class="icon icon-bar"></span>
+                      <span class="icon icon-bar"></span>
+                  </button>
+                    <!-- lOGO TEXT HERE -->
+                    <a href="index.html" class="navbar-brand">抽签系统</a>
+              </div>
+              <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                         <li><a href="#home">开始抽签</a></li>
+                         <li><a href="#contact">抽签准备</a></li>
+                    </ul>
+               </div>
+          </div>
+      </section>
+
+      <section id="home" data-stellar-background-ratio="0.5">
+          <div class="overlay"></div>
+          <div class="container">
+              <div class="row">
+                  <div class="col-md-6 col-sm-12">
+                          <h1 id="txt">等待抽取</h1>
+                          <button id="startBtn" class="section-btn" onclick = "Check();timedCount();changeButton(1);" hidden="hide">滚动</button>
+                          <button id="drawBtn" class="section-btn" onClick = "stopCount();Random();changeButton(2);" hidden="hide">抽取</button>
+                          <button id="clearBtn" class="section-btn" onclick = "Clear();" hidden="hide">清空</button>
+                      
+                  </div>
+                  <div class="col-md-6 col-sm-12">
+                      <div class="pricing-thumb">
+                          <div class="pricing-title" id="drawDashboard">
+                              <div id='drawSummary'></div>
+                              <h2 id="count">还未设置抽签内容，请先设置</h2>
+                              <div id="setting"><a class="section-btn" href= "#contact">设置</a></div>
+                              <span id = "display"></span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <section id="contact" data-stellar-background-ratio="0.5">
+          <div class="container">
+              <div class="row">
+                  <div class="col-md-offset-1 col-md-10 col-sm-12">
+                      <div class="section-title">
+                          <h1>抽签设置</h1>
+                      </div>
+                      <div class="row">
+                          <div class="col-md-8 col-sm-8">
+                              <h3>抽签内容</h3>
+                              <textarea class="form-control" rows="8" id="list_info" onchange="obtainParameters();">黑龙江,内蒙古,吉林,辽宁,河北,北京,天津</textarea>
+                          </div>
+                          <div class="col-md-4 col-sm-4">
+                              <h3>抽取数量</h3>
+                              <input type="text" class="form-control" id="target_info" value='3' onchange="obtainParameters();"><br>
+                              <div id="drawSummary2"></div><br>
+                              <a class="section-btn" onclick = "obtainParameters();" href="#home">确定</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+      <script src="js/jquery.js"></script>
+      <script src="js/bootstrap.min.js"></script>
+      <script src="js/custom.js"></script>
+  </body>
+</html>
